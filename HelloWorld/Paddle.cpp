@@ -4,22 +4,20 @@
 
 void drawPaddle(const Paddle& paddle) {
 
-	const int paddleWidth = 60;
-	const int paddleHeight = 10;
 
 	Play::Point2f topLeft =
 	{
-		paddle.pos.x - paddleWidth / 2,
-		paddle.pos.y - paddleHeight / 2
+		paddle.pos.x - PADDLEWIDTH / 2,
+		paddle.pos.y - PADDLEHEIGHT / 2
 	};
 
 	Play::Point2f bottomRight =
 	{
-		paddle.pos.x + paddleWidth / 2,
-		paddle.pos.y + paddleHeight / 2
+		paddle.pos.x + PADDLEWIDTH / 2,
+		paddle.pos.y + PADDLEHEIGHT / 2
 	};
 
-	Play::DrawRect(topLeft, bottomRight, Play::cWhite);
+	Play::DrawRect(topLeft, bottomRight, paddle.colour, true);
 };
 
 void updatePaddle(Paddle& paddle, float dt) {
@@ -39,5 +37,13 @@ void updatePaddle(Paddle& paddle, float dt) {
 
 	if (paddle.pos.x > DISPLAY_WIDTH - halfWidth)
 		paddle.pos.x = DISPLAY_WIDTH - halfWidth;
+
+	if (paddle.hitTimer > 0.0f) {
+		paddle.hitTimer -= dt;
+		if (paddle.hitTimer <= 0.0f) {
+			paddle.hitTimer = 0.0f;
+			paddle.colour = Play::cWhite;
+		}
+	}
 };
 
