@@ -27,14 +27,14 @@ void updatePaddle(Paddle& paddle, float dt) {
 
 	if (Play::KeyDown(Play::KEY_A)) {
 		paddle.pos.x -= speed * dt;
-	};
+	}
 	if (Play::KeyDown(Play::KEY_D)) {
 		paddle.pos.x += speed * dt;
-	};
+	}
 	
 	if (paddle.pos.x < halfWidth)
 		paddle.pos.x = halfWidth;
-
+		
 	if (paddle.pos.x > DISPLAY_WIDTH - halfWidth)
 		paddle.pos.x = DISPLAY_WIDTH - halfWidth;
 
