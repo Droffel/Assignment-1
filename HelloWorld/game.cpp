@@ -11,7 +11,9 @@
 Paddle gPaddle;
 unsigned int score = 0;
 std::string scoreText = "Score: 0";
-std::array<unsigned int, 5> highScores = { 0, 0, 0, 0, 0 };
+std::array<unsigned int, 5> highScores = {};
+bool ballDestroyed = false;
+
 
 //spawns a ball in the middle of the screen
 void spawnBall() {
@@ -23,6 +25,7 @@ void spawnBall() {
 
 float Max(float a, float b) { return (a > b) ? a : b; }
 float Min(float a, float b) { return (a < b) ? a : b; }
+
 
 //checks collision between circle and rectangle
 bool isCircleBrickColliding(const Play::GameObject& rectObj, const Play::GameObject& circleObj, float halfW, float halfH){
@@ -64,7 +67,18 @@ bool isColliding(const Paddle& paddle, const Play::GameObject& obj) {
 	return (dx * dx + dy * dy) < (obj.radius * obj.radius);
 }
 
-
+void addHighScore(unsigned int newScore) {
+	for (size_t i = 0; i < highScores.size(); ++i) {
+		if (newScore > highScores[i]) {
+			// Shift lower scores down
+			for (size_t j = highScores.size() - 1; j > i; --j) {
+				highScores[j] = highScores[j - 1];
+			}
+			highScores[i] = newScore;
+			break;
+		}
+	}
+}
 
 void stepFrame(float time) {
 	
@@ -75,7 +89,7 @@ void stepFrame(float time) {
 		Play::UpdateGameObject(Play::GetGameObject(ballIds[i]));
 		Play::DrawObject(Play::GetGameObject(ballIds[i]));
 
-		if (Play::GetGameObject(ballIds[i]).pos.x > DISPLAY_WIDTH || Play::GetGameObject(ballIds[i]).pos.x < 0) {
+		if (Play::GetGameObject(ballIds[i]).pos.x > DISPLAY_WIDTH-8 || Play::GetGameObject(ballIds[i]).pos.x < 0) {
 
 			Play::GetGameObject(ballIds[i]).velocity.x = -Play::GetGameObject(ballIds[i]).velocity.x;
 		}
@@ -86,6 +100,8 @@ void stepFrame(float time) {
 
 		if (Play::GetGameObject(ballIds[i]).pos.y < 0) {
 			Play::DestroyGameObject(ballIds[i]);
+			ballDestroyed = true;
+			
 		}
 	}
 
@@ -151,10 +167,40 @@ void stepFrame(float time) {
 		}
 	}
 
+	if(ballDestroyed){//respawns ball if destroyed
+		addHighScore(score);
+		spawnBall();
+		ballDestroyed = false;
+		score = 0;
+
+		for (int i = 0; i < size(brickIds); i++) {//destroys bricks
+			Play::DestroyGameObject(brickIds[i]);
+		}
+
+		for (int y = 330; y >= 250; y -= 10) {
+
+			for (int x = 32; x < DISPLAY_WIDTH - 32; x += 16) {
+				Play::CreateGameObject(ObjectType::TYPE_BRICK, { x, y }, 10, "brick");
+			};
+		};
+
+		for (int i = 0; i < size(brickIds); i++) {//draws bricks
+			Play::UpdateGameObject(Play::GetGameObject(brickIds[i]));
+			Play::DrawObject(Play::GetGameObject(brickIds[i]));
+
+		}
+	}
 	
 	updatePaddle(gPaddle, time);
 	drawPaddle(gPaddle);
 	Play::DrawDebugText(Play::Point2D(80, 10), scoreText.c_str(), Play::cWhite);
+	Play::DrawDebugText(Play::Point2D(500, 150), "High Scores:", Play::cWhite);
+
+	for (int i = 0; i < highScores.size(); ++i) {
+		Play::DrawDebugText(Play::Point2D(500, 25 + (i + 1) * 15), std::to_string(highScores[i]).c_str(), Play::cWhite);
+	}
+	
+	
 	
 
 
@@ -204,6 +250,9 @@ void setupScene() {//sets up bricks and paddle position
 
 	gPaddle.pos = { DISPLAY_WIDTH / 2, DISPLAY_HEIGHT - (DISPLAY_HEIGHT - 50) };
 
+	
+	
+	
 	
 
 };
