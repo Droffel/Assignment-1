@@ -95,7 +95,7 @@ void stepFrame(float time) {
 
 	}
 
-	for (int i2 = 0; i2 < size(ballIds); i2++) {
+	for (int i2 = 0; i2 < size(ballIds); i2++) {//checks collision between balls and bricks
 		Play::GameObject& ball = Play::GetGameObject(ballIds[i2]);
 		for (int i = 0; i < size(brickIds); ++i) {
 
@@ -158,7 +158,7 @@ void stepFrame(float time) {
 	
 
 
-	for (int id : ballIds)
+	for (int id : ballIds)//checks collision between paddle and ball
 	{
 		Play::GameObject& ball = Play::GetGameObject(id);
 
@@ -194,7 +194,7 @@ void stepFrame(float time) {
 };
 
 
-void setupScene() {
+void setupScene() {//sets up bricks and paddle position
 	for (int y = 330; y >= 250; y -= 10) {
 		
 		for (int x = 32; x < DISPLAY_WIDTH - 32; x += 16) {

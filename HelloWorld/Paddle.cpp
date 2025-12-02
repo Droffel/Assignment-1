@@ -2,7 +2,7 @@
 #include "Paddle.h"
 #include "Constants.h"
 
-void drawPaddle(const Paddle& paddle) {
+void drawPaddle(const Paddle& paddle) {//create rectangle for paddle
 
 
 	Play::Point2f topLeft =
@@ -20,7 +20,7 @@ void drawPaddle(const Paddle& paddle) {
 	Play::DrawRect(topLeft, bottomRight, paddle.colour, true);
 };
 
-void updatePaddle(Paddle& paddle, float dt) {
+void updatePaddle(Paddle& paddle, float dt) {//move paddle left and right with A and D keys
 
 	const float speed = 400.0f;
 	const float halfWidth = 30.0f;
