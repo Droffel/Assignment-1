@@ -68,13 +68,12 @@ bool isColliding(const Paddle& paddle, const Play::GameObject& obj) {
 }
 
 void addHighScore(unsigned int newScore) {
-	for (size_t i = 0; i < highScores.size(); ++i) {
-		if (newScore > highScores[i]) {
-			// Shift lower scores down
-			for (size_t j = highScores.size() - 1; j > i; --j) {
-				highScores[j] = highScores[j - 1];
+	for (int highList = 0; highList < highScores.size(); ++highList) {
+		if(newScore > highScores[highList]) {
+			for (int shiftIndex = highScores.size() - 1; shiftIndex > highList; --shiftIndex) {
+				highScores[shiftIndex] = highScores[shiftIndex - 1];
 			}
-			highScores[i] = newScore;
+			highScores[highList] = newScore;
 			break;
 		}
 	}
@@ -167,7 +166,7 @@ void stepFrame(float time) {
 		}
 	}
 
-	if(ballDestroyed){//respawns ball if destroyed
+	if (ballDestroyed) {//respawns ball if destroyed, adds highscore and resets bricks if ball goes off bottom of screen
 		addHighScore(score);
 		spawnBall();
 		ballDestroyed = false;
@@ -197,7 +196,7 @@ void stepFrame(float time) {
 	Play::DrawDebugText(Play::Point2D(500, 150), "High Scores:", Play::cWhite);
 
 	for (int i = 0; i < highScores.size(); ++i) {
-		Play::DrawDebugText(Play::Point2D(500, 25 + (i + 1) * 15), std::to_string(highScores[i]).c_str(), Play::cWhite);
+		Play::DrawDebugText(Play::Point2D(500, 100 + (i * -15)), std::to_string(highScores[i]).c_str(), Play::cWhite);
 	}
 	
 	
